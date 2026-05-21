@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Session {
+  id          String    @id @default(cuid())
+  role        String
+  level       String
+  language    String
+  sessionType String
+  topic         String?
+  interviewMode String    @default("direct")
+  reviewMode    String    @default("per-question")
+  status        String    @default("active")
+  totalScore  Float?
+  durationSec Int?
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  questions Question[]
+}
+
+model Question {
+  id         String   @id @default(cuid())
+  sessionId  String
+  text       String
+  topicTag   String
+  difficulty String
+  orderIndex Int
+  isFollowUp Boolean  @default(false)
+  parentId   String?
+  createdAt  DateTime @default(now())
+
+  session Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  answers Answer[]
+
+  @@index([sessionId])
+}
+
+model Answer {
+  id             String   @id @default(cuid())
+  questionId     String
+  text           String
+  isCode         Boolean  @default(false)
+  submittedAt    DateTime @default(now())
+  evaluationText String?
+  score          Float?
+  strengths      String?
+  weaknesses     String?
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+}
+
+model TopicStat {
+  id           String   @id @default(cuid())
+  tag          String   @unique
+  displayName  String
+  totalAnswers Int      @default(0)
+  totalScore   Float    @default(0)
+  avgScore     Float    @default(0)
+  lastSeenAt   DateTime @default(now())
+}
+
+model UserModel {
+  id                   String   @id @default("singleton")
+  answerStyle          String   @default("{}")
+  frameworkGaps        String   @default("[]")
+  recurringMistakes    String   @default("[]")
+  knowledgeGaps        String   @default("[]")
+  strengths            String   @default("[]")
+  communicationPatterns String  @default("{}")
+  overallAssessment    String   @default("{}")
+  recommendedFocus     String   @default("[]")
+  sessionCount         Int      @default(0)
+  lastUpdatedAt        DateTime @default(now())
+  createdAt            DateTime @default(now())
+}
