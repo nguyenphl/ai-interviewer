@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ThinkingIndicator } from "./thinking-indicator";
 import { InterviewHeader } from "./interview-header";
 import { QuestionCard } from "./question-card";
@@ -28,7 +28,10 @@ export function InterviewClient({ session: initial }: { session: InterviewSessio
   });
 
   const stt = useStt({ answer: interview.answer, setAnswer: interview.setAnswer });
-  stopSttRef.current = stt.stopStt;
+  
+  useEffect(() => {
+    stopSttRef.current = stt.stopStt;
+  }, [stt.stopStt]);
 
   const session = initial;
   const {
@@ -129,6 +132,9 @@ export function InterviewClient({ session: initial }: { session: InterviewSessio
                   sttActive={stt.sttActive}
                   onToggleStt={stt.toggleStt}
                   onSubmit={submitAnswer}
+                  sttError={stt.sttError}
+                  sttLang={stt.sttLang}
+                  onToggleSttLang={stt.toggleSttLang}
                 />
               )}
 

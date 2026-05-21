@@ -27,6 +27,9 @@ interface AnswerSectionProps {
   sttActive: boolean;
   onToggleStt: () => void;
   onSubmit: () => void;
+  sttError?: string | null;
+  sttLang?: "en-US" | "vi-VN";
+  onToggleSttLang?: () => void;
 }
 
 /**
@@ -43,6 +46,9 @@ export function AnswerSection({
   sttActive,
   onToggleStt,
   onSubmit,
+  sttError,
+  sttLang,
+  onToggleSttLang,
 }: AnswerSectionProps) {
   return (
     <div className="space-y-3">
@@ -74,22 +80,46 @@ export function AnswerSection({
         </button>
       </div>
 
-      {/* Mic button (STT) */}
+      {/* Mic button (STT) & language toggle & error message */}
       {hasStt && !isCode && (
-        <button
-          type="button"
-          onClick={onToggleStt}
-          title={sttActive ? "Stop recording" : "Speak your answer"}
-          className={cn(
-            "flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium border transition-all",
-            sttActive
-              ? "border-red-500/50 bg-red-500/10 text-red-400 animate-pulse"
-              : "border-white/15 text-white/50 hover:border-white/30 hover:text-white"
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onToggleStt}
+              title={sttActive ? "Stop recording" : "Speak your answer"}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium border transition-all",
+                sttActive
+                  ? "border-red-500/50 bg-red-500/10 text-red-400 animate-pulse"
+                  : "border-white/15 text-white/50 hover:border-white/30 hover:text-white"
+              )}
+            >
+              {sttActive ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
+              {sttActive ? "Stop" : "Speak"}
+            </button>
+
+            {sttLang && onToggleSttLang && (
+              <button
+                type="button"
+                onClick={onToggleSttLang}
+                title="Click to toggle speaking language"
+                className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/[0.02] px-2.5 py-2 text-xs font-medium text-white/60 hover:bg-white/[0.06] hover:text-white transition-all cursor-pointer"
+              >
+                <span>Speak:</span>
+                <span className="text-blue-400 font-semibold">
+                  {sttLang === "en-US" ? "English (EN)" : "Tiếng Việt (VI)"}
+                </span>
+              </button>
+            )}
+          </div>
+
+          {sttError && (
+            <p className="text-[11px] text-red-400/90 bg-red-500/5 border border-red-500/10 rounded-lg px-3 py-2 w-fit">
+              ⚠️ {sttError}
+            </p>
           )}
-        >
-          {sttActive ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
-          {sttActive ? "Stop" : "Speak"}
-        </button>
+        </div>
       )}
 
       {/* Input */}
