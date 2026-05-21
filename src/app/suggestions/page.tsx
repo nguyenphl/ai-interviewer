@@ -36,7 +36,7 @@ export default async function SuggestionsPage() {
   const weakCount = suggestions.filter((s) => s.avgScore < 6).length;
 
   return (
-    <div className="p-6 max-w-4xl space-y-6">
+    <div className="min-h-full px-6 py-8 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-white">Study Suggestions</h1>
